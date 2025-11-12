@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 210 40% 98%;
+    --card: 0 0% 0%;
+    --card-foreground: 210 40% 98%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 0 0% 40%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #111111 0%, #000000 100%);
+}
+
+.chart-container {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  border: 0px solid rgba(251, 251, 251);
+}
+
+/* Responsive utilities */
+.container-responsive {
+  @apply w-full px-4 sm:px-6 lg:px-8;
+}
+
+/* Ensure minimum touch targets for mobile */
+.touch-target {
+  @apply min-h-[44px] min-w-[44px];
+}
+
+/* Scrollable containers with custom scrollbars */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #374151 #111827;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+/* Emerald scrollbar for positive news */
+.scrollbar-emerald {
+  scrollbar-width: thin;
+  scrollbar-color: #10b981 #1f2937;
+}
+
+.scrollbar-emerald::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-emerald::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+.scrollbar-emerald::-webkit-scrollbar-thumb {
+  @apply bg-emerald-500 rounded-full;
+}
+
+.scrollbar-emerald::-webkit-scrollbar-thumb:hover {
+  @apply bg-emerald-400;
+}
+
+/* Yellow scrollbar for neutral news */
+.scrollbar-yellow {
+  scrollbar-width: thin;
+  scrollbar-color: #eab308 #1f2937;
+}
+
+.scrollbar-yellow::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-yellow::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+.scrollbar-yellow::-webkit-scrollbar-thumb {
+  @apply bg-yellow-500 rounded-full;
+}
+
+.scrollbar-yellow::-webkit-scrollbar-thumb:hover {
+  @apply bg-yellow-400;
+}
+
+/* Red scrollbar for negative news */
+.scrollbar-red {
+  scrollbar-width: thin;
+  scrollbar-color: #dc2626 #1f2937;
+}
+
+.scrollbar-red::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-red::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+.scrollbar-red::-webkit-scrollbar-thumb {
+  @apply bg-red-500 rounded-full;
+}
+
+.scrollbar-red::-webkit-scrollbar-thumb:hover {
+  @apply bg-red-400;
+}

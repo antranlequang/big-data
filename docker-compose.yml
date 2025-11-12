@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: crypto-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: bankuser
+      MINIO_ROOT_PASSWORD: BankPass123!
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - crypto-network
+
+  minio-setup:
+    image: minio/mc:latest
+    container_name: crypto-minio-setup
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: bankuser
+      MINIO_ROOT_PASSWORD: BankPass123!
+    entrypoint: >
+      /bin/sh -c "
+      sleep 10;
+      /usr/bin/mc alias set minio http://minio:9000 bankuser BankPass123!;
+      /usr/bin/mc mb minio/crypto-data --ignore-existing;
+      /usr/bin/mc policy set public minio/crypto-data;
+      echo 'MinIO setup completed';
+      "
+    networks:
+      - crypto-network
+
+  crypto-dashboard:
+    build: .
+    container_name: crypto-dashboard-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=bankuser
+      - MINIO_SECRET_KEY=BankPass123!
+      - MINIO_USE_SSL=false
+    depends_on:
+      minio:
+        condition: service_healthy
+      minio-setup:
+        condition: service_completed_successfully
+    networks:
+      - crypto-network
+
+volumes:
+  minio_data:
+
+networks:
+  crypto-network:
+    driver: bridge

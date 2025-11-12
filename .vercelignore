@@ -1,0 +1,57 @@
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local development files
+.env.local
+.env
+
+# Temporary files
+temp/
+*.log
+*.tmp
+
+# Data files (use MinIO instead)
+data/raw/
+data/processed/
+data/clean/*.csv
+data/clean/*.json
+
+# Model files (store in MinIO)
+models/*.h5
+models/*.pkl
+
+# Node modules (handled by package.json)
+node_modules/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+.next/
+out/
+dist/
+
+# Docker files
+Dockerfile
+docker-compose.yml
+
+# Git files
+.git/
+.gitignore
+
+# Documentation (optional)
+README-FORECASTING.md
+README-MinIO.md
+design.md
+treemap.md

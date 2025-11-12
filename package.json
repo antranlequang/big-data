@@ -1,0 +1,45 @@
+{
+  "name": "crypto-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "deploy": "docker-compose up -d --build",
+    "deploy:vercel": "./scripts/deploy.sh",
+    "deploy:prod": "./scripts/deploy.sh --production",
+    "test:minio": "python3 lib/minio_client.py",
+    "test:pipeline": "python3 lib/data_pipeline.py",
+    "vercel:env": "vercel env ls",
+    "git:validate": "./scripts/validate-git.sh",
+    "git:safe-push": "./scripts/validate-git.sh && git push"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "chartjs-chart-financial": "^0.2.1",
+    "jsdom": "^27.1.0",
+    "minio": "7.1.3",
+    "next": "13.5.6",
+    "react": "18.2.0",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "18.2.0",
+    "recharts": "2.8.0",
+    "treemap-chart": "^1.9.4"
+  },
+  "devDependencies": {
+    "@types/node": "20.5.0",
+    "@types/react": "18.2.20",
+    "@types/react-dom": "18.2.7",
+    "autoprefixer": "10.4.15",
+    "postcss": "8.4.27",
+    "tailwindcss": "3.3.3",
+    "typescript": "5.1.6"
+  }
+}

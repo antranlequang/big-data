@@ -1,0 +1,148 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+build/
+dist/
+.next/cache/
+
+# Vercel
+.vercel/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# API Keys and Secrets (CRITICAL - Don't commit these!)
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+config/secrets.json
+config/keys.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Data files (Contains sensitive crypto data)
+data/raw/
+data/processed/
+data/clean/*.csv
+data/clean/*.json
+data/predictions/
+data/backups/
+*.csv
+*.json
+!data/clean/data_metadata.json
+!package.json
+!vercel.json
+!.vscode/settings.json
+
+# Model artifacts (Large ML files)
+models/*.h5
+models/*.pkl
+models/*.joblib
+models/*.pt
+models/*.pth
+*.model
+
+# Logs
+logs/
+*.log
+candle_*.log
+*.log.*
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.temp
+retrieve_bitcoin_*.py
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+coverage/
+.nyc_output/
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+.coverage.*
+
+# Build artifacts
+*.tsbuildinfo
+.next/
+out/
+build/
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# MinIO/Storage related
+*.minio/
+minio_data/
+storage/
+
+# Crypto-specific sensitive files
+wallet.json
+private_keys.json
+api_credentials.json
+trading_config.json
+*.wallet
+
+# Large datasets
+*.parquet
+*.feather
+*.hdf5
+*.h5
+
+# Backup files
+*.bak
+*.backup
+*_backup.*
+backup_*
+
+# Local development
+local_config.json
+dev_settings.json
