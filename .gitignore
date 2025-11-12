@@ -137,6 +137,17 @@ trading_config.json
 *.hdf5
 *.h5
 
+# Large files (GitHub size limits)
+**/files_larger_than_50MB
+**/files_larger_than_100MB
+
+# Jupyter notebook outputs (can be large)
+*.ipynb_checkpoints
+
+# Additional cache directories
+.cache/
+.vercel/cache/
+
 # Backup files
 *.bak
 *.backup
