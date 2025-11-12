@@ -1,7 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "pip install --no-cache-dir -r requirements-vercel.txt && npm ci && npm run build",
-  "outputDirectory": ".next",
   "framework": "nextjs",
   "functions": {
     "app/api/*/route.ts": {

@@ -1,6 +1,0 @@
-flask==3.0.3
-flask-cors==4.0.1
-minio==7.1.17
-requests==2.31.0
-numpy==1.24.3
-pytz==2023.3

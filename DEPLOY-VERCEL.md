@@ -16,11 +16,11 @@ npm run git:validate   # ✅ Check repository size and files
 
 ### 2. One-Command Deploy
 ```bash
-# Deploy with automated script
-npm run deploy:prod
-
-# Or manual deploy
+# Deploy to Vercel (auto-detects Next.js)
 vercel --prod
+
+# Or use npm script
+npm run deploy:prod
 ```
 
 ### 3. Environment Variables (Essential)
@@ -36,30 +36,30 @@ Set these in [Vercel Dashboard](https://vercel.com/dashboard) → Project Settin
 
 ---
 
-## 🐍 Python Services Strategy
+## 🚀 Simplified Next.js Deployment
 
-### Optimized for Vercel Deployment
+### Pure TypeScript Application
 
-The Python services are configured for **fast, parallel execution** on Vercel:
+This is now a **streamlined Next.js application** optimized for Vercel:
 
-#### Core Services (Auto-Configured)
-```python
-# These run automatically on Vercel:
-1. Data Collection    → /api/python/collect-data    (5 min intervals)
-2. Data Pipeline      → /api/python/data-pipeline   (hourly)
-3. ML Training        → /api/python/training        (30 min intervals) 
-4. Forecasting        → /api/python/forecast        (on-demand)
-5. Technical Analysis → /api/python/candle-data     (daily)
+#### Core Features:
+```typescript
+✅ Real-time crypto dashboard with TypeScript API routes
+✅ MinIO integration for data storage
+✅ Interactive charts and analytics  
+✅ News sentiment analysis
+✅ Technical indicators and forecasting
+✅ Zero build conflicts - works immediately
 ```
 
-#### Python Files That Run in Parallel:
-| File | Vercel Function | Purpose | Trigger |
-|------|-----------------|---------|---------|
-| `lib/coingecko_fetcher.py` | `/api/python/collect-data` | Fetch market data | Cron: `0 */5 * * *` |
-| `lib/data_pipeline.py` | `/api/python/data-pipeline` | Process & clean data | Cron: `0 * * * *` |
-| `lib/continuous-training.py` | `/api/python/training` | Update ML models | Cron: `*/30 * * * *` |
-| `lib/real-time-forecasting.py` | `/api/python/forecast` | Generate predictions | On-demand API |
-| `start_candle_service.py` | `/api/python/candle-data` | Technical indicators | Cron: `0 0 * * *` |
+#### API Routes (TypeScript):
+| Route | Purpose | Location |
+|-------|---------|----------|
+| `/api/crypto` | Crypto data from MinIO | `app/api/crypto/route.ts` |
+| `/api/forecast` | Price predictions | `app/api/forecast/route.ts` |
+| `/api/news-analysis` | News sentiment | `app/api/news-analysis/route.ts` |
+| `/api/candle-chart` | OHLCV data | `app/api/candle-chart/route.ts` |
+| `/api/coins` | Available cryptocurrencies | `app/api/coins/route.ts` |
 
 ---
 
