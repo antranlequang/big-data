@@ -157,3 +157,25 @@ backup_*
 # Local development
 local_config.json
 dev_settings.json
+
+
+# Local data directories accidentally created
+minio-data/
+minio_data/
+datasets/
+uploads/
+
+# Prevent committing output from model training or forecasting
+output/
+results/
+forecasts/
+runs/
+
+# Large notebook exports
+*.html
+*.zip
+*.tar.gz
+*.tgz
+
+# Mac temporary cache
+.AppleDouble
