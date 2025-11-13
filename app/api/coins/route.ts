@@ -1,13 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
-// DISABLED FOR DEPLOYMENT: import { fetchAvailableCoins } from '../../../lib/api'
+import { fetchAvailableCoins } from '../../../lib/api'
 
-// GET route to fetch available coins from CoinGecko API - TEMPORARILY DISABLED FOR DEPLOYMENT
+// GET route to fetch available coins from CoinGecko API - RE-ENABLED WITH 5-MINUTE INTERVALS
 export async function GET(request: NextRequest) {
   try {
-    // DISABLED: const coins = await fetchAvailableCoins()
-    console.log('Coins API disabled for deployment - returning static list')
+    const coins = await fetchAvailableCoins()
     
-    // Return static list of popular coins instead of fetching from API
+    return NextResponse.json({
+      success: true,
+      coins,
+      count: coins.length
+    })
+  } catch (error) {
+    console.error('Error fetching available coins:', error)
+    
+    // Fallback to static list if API fails
     const staticCoins = [
       { id: 'bitcoin', name: 'Bitcoin', symbol: 'btc' },
       { id: 'ethereum', name: 'Ethereum', symbol: 'eth' },
@@ -21,19 +28,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       coins: staticCoins,
-      count: staticCoins.length
+      count: staticCoins.length,
+      fallback: true
     })
-  } catch (error) {
-    console.error('Error in coins API:', error)
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Coins API disabled for deployment',
-        coins: [],
-        count: 0
-      },
-      { status: 500 }
-    )
   }
 }
 

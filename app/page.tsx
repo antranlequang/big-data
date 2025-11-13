@@ -28,7 +28,7 @@ export default function CryptoDashboard() {
   const [forecastData, setForecastData] = useState<any>(null)
   const [candleData, setCandleData] = useState<any>(null)
   const [tradingSignals, setTradingSignals] = useState<any>(null)
-  const [priceCountdown, setPriceCountdown] = useState<number>(60)
+  const [priceCountdown, setPriceCountdown] = useState<number>(300)
   const [forecastCountdown, setForecastCountdown] = useState<number>(300)
   const [lastCandleFetchDate, setLastCandleFetchDate] = useState<string>('')
   const [newsData, setNewsData] = useState<any>(null)
@@ -43,43 +43,64 @@ export default function CryptoDashboard() {
     reasoning: string[]
   } | null>(null)
 
-  // Fetch available coins from CoinGecko API - TEMPORARILY DISABLED FOR DEPLOYMENT
+  // Fetch available coins from CoinGecko API - RE-ENABLED WITH 5-MINUTE INTERVALS
   const fetchAvailableCoins = async () => {
     setLoadingCoins(true)
     try {
-      // DISABLED: const response = await fetch('/api/coins')
-      // Use hardcoded top coins instead of fetching from API
+      const response = await fetch('/api/coins')
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success && result.coins.length > 0) {
+          setAvailableCoins(result.coins)
+          // Set default coin if not already set
+          if (!selectedCoin && result.coins.length > 0) {
+            setSelectedCoin(result.coins[0].id)
+          }
+        }
+      } else {
+        // Fallback to static coins if API fails
+        const staticCoins = [
+          { id: 'bitcoin', name: 'Bitcoin', symbol: 'btc' },
+          { id: 'ethereum', name: 'Ethereum', symbol: 'eth' },
+          { id: 'tether', name: 'Tether', symbol: 'usdt' },
+          { id: 'bnb', name: 'BNB', symbol: 'bnb' },
+          { id: 'solana', name: 'Solana', symbol: 'sol' },
+          { id: 'usdc', name: 'USD Coin', symbol: 'usdc' },
+          { id: 'xrp', name: 'XRP', symbol: 'xrp' }
+        ]
+        setAvailableCoins(staticCoins)
+        if (!selectedCoin && staticCoins.length > 0) {
+          setSelectedCoin(staticCoins[0].id)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching available coins:', error)
+      // Fallback to static coins on error
       const staticCoins = [
         { id: 'bitcoin', name: 'Bitcoin', symbol: 'btc' },
         { id: 'ethereum', name: 'Ethereum', symbol: 'eth' },
-        { id: 'tether', name: 'Tether', symbol: 'usdt' },
-        { id: 'bnb', name: 'BNB', symbol: 'bnb' },
-        { id: 'solana', name: 'Solana', symbol: 'sol' },
-        { id: 'usdc', name: 'USD Coin', symbol: 'usdc' },
-        { id: 'xrp', name: 'XRP', symbol: 'xrp' }
+        { id: 'tether', name: 'Tether', symbol: 'usdt' }
       ]
-      
       setAvailableCoins(staticCoins)
-      // Set default coin if not already set
       if (!selectedCoin && staticCoins.length > 0) {
         setSelectedCoin(staticCoins[0].id)
       }
-    } catch (error) {
-      console.error('Error setting available coins:', error)
     } finally {
       setLoadingCoins(false)
     }
   }
 
-  // Fetch current coin data from CoinGecko API - TEMPORARILY DISABLED FOR DEPLOYMENT
+  // Fetch current coin data from CoinGecko API - RE-ENABLED WITH 5-MINUTE INTERVALS  
   const fetchCurrentCoinData = async () => {
     if (!selectedCoin) return
     
     setLoading(true)
     try {
-      // DISABLED: const coinData = await fetchCoinData(selectedCoin)
-      console.log('CoinGecko API disabled for deployment - using MinIO data only')
-      setLastUpdate(new Date().toLocaleTimeString())
+      const coinData = await fetchCoinData(selectedCoin)
+      if (coinData) {
+        setCryptoData(coinData)
+        setLastUpdate(new Date().toLocaleTimeString())
+      }
     } catch (error) {
       console.error('Error fetching coin data:', error)
     } finally {
@@ -114,14 +135,14 @@ export default function CryptoDashboard() {
           })
           setLastUpdate(new Date().toLocaleTimeString())
         } else {
-          // No MinIO data - API disabled for deployment
-          console.log('No MinIO data available, API calls disabled for deployment')
+          // No MinIO data, fetch from API as fallback
+          await fetchCurrentCoinData()
         }
       }
     } catch (error) {
       console.error('Error fetching MinIO data:', error)
-      // API fallback disabled for deployment
-      console.log('API fallback disabled for deployment')
+      // Fallback to API when MinIO fails
+      await fetchCurrentCoinData()
     }
   }
 
@@ -322,8 +343,8 @@ export default function CryptoDashboard() {
         fetchTreemapData()
       ])
       
-      // Reset price countdown
-      setPriceCountdown(60)
+      // Reset price countdown to 5 minutes
+      setPriceCountdown(300)
       
       setLastUpdate(new Date().toLocaleTimeString())
       console.log('🔄 Regular data refreshed at:', new Date().toLocaleTimeString())
@@ -488,13 +509,13 @@ export default function CryptoDashboard() {
     }
   }
 
-  // Auto-refresh all data every 1 minute (centralized)
+  // Auto-refresh all data every 5 minutes (centralized) - UPDATED FOR BETTER API RATE LIMITS
   useEffect(() => {
     refreshAllData()
     refreshForecastData() // Initial forecast fetch
     checkAndUpdateCandleData() // Initial candle data check
     
-    const dataInterval = setInterval(refreshAllData, 60000) // 1 minute
+    const dataInterval = setInterval(refreshAllData, 300000) // 5 minutes - CHANGED FROM 1 MINUTE
     const forecastInterval = setInterval(refreshForecastData, 300000) // 5 minutes
     const candleCheckInterval = setInterval(checkAndUpdateCandleData, 3600000) // 1 hour check for daily update
     
@@ -510,7 +531,7 @@ export default function CryptoDashboard() {
     const priceCountdownTimer = setInterval(() => {
       setPriceCountdown(prev => {
         if (prev <= 1) {
-          return 60 // Reset to 60 when it reaches 0
+          return 300 // Reset to 300 (5 minutes) when it reaches 0
         }
         return prev - 1
       })
@@ -557,15 +578,26 @@ export default function CryptoDashboard() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isDropdownOpen])
 
-  // Data collector - TEMPORARILY DISABLED FOR DEPLOYMENT
+  // Data collector - RE-ENABLED WITH SLOWER INTERVALS FOR BETTER API MANAGEMENT
   useEffect(() => {
     const startDataCollector = async () => {
       try {
-        console.log('📝 Data collector disabled for deployment - using existing MinIO data only')
-        // DISABLED: Auto-starting background data collector
-        // This prevents CoinGecko API calls during deployment
+        console.log('🚀 Starting background data collector with 5-minute intervals...')
+        
+        const response = await fetch('/api/data-collector', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'start' })
+        })
+        
+        const result = await response.json()
+        if (result.success) {
+          console.log('✅ Background data collector started with optimized intervals')
+        } else {
+          console.error('❌ Failed to start data collector:', result.error)
+        }
       } catch (error) {
-        console.error('❌ Error in data collector setup:', error)
+        console.error('❌ Error starting data collector:', error)
       }
     }
     

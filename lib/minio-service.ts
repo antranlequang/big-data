@@ -1,23 +1,45 @@
 import { Client as MinioClient } from 'minio'
 import type { CryptoData } from './types'
 
-// MinIO connection configuration (same as app.py)
-const minioClient = new MinioClient({
-  endPoint: '127.0.0.1',
-  port: 9000,
-  useSSL: false,
-  accessKey: 'bankuser',
-  secretKey: 'BankPass123!'
-})
+// MinIO connection configuration - Lazy initialization to avoid build-time issues
+const getMinioConfig = () => {
+  const endpoint = process.env.MINIO_ENDPOINT || 'play.min.io'
+  const useSSL = process.env.MINIO_USE_SSL === 'true'
+  
+  console.log('MinIO Config:', {
+    endpoint,
+    useSSL,
+    accessKey: process.env.MINIO_ACCESS_KEY?.substring(0, 3) + '***'
+  })
+  
+  return {
+    endPoint: endpoint,
+    port: endpoint === 'play.min.io' ? 443 : 9000,
+    useSSL,
+    accessKey: process.env.MINIO_ACCESS_KEY || 'Q3AM3UQ867SPQQA43P2F',
+    secretKey: process.env.MINIO_SECRET_KEY || 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG'
+  }
+}
 
-const BUCKET_NAME = 'crypto-data'
+// Lazy initialization - create client only when needed
+let minioClient: MinioClient | null = null
+
+const getMinioClient = () => {
+  if (!minioClient) {
+    minioClient = new MinioClient(getMinioConfig())
+  }
+  return minioClient
+}
+
+const BUCKET_NAME = process.env.MINIO_BUCKET || 'crypto-data'
 
 // Initialize MinIO bucket
 export async function initializeMinio(): Promise<boolean> {
   try {
-    const bucketExists = await minioClient.bucketExists(BUCKET_NAME)
+    const client = getMinioClient()
+    const bucketExists = await client.bucketExists(BUCKET_NAME)
     if (!bucketExists) {
-      await minioClient.makeBucket(BUCKET_NAME)
+      await client.makeBucket(BUCKET_NAME)
       console.log('✅ MinIO bucket created successfully')
     }
     return true
@@ -65,7 +87,7 @@ export async function saveTop50CoinsToMinio(coinsData: CryptoData[]): Promise<bo
     // Try to read existing file and append
     let finalCsvContent: string
     try {
-      const existingObject = await minioClient.getObject(BUCKET_NAME, filename)
+      const existingObject = await getMinioClient().getObject(BUCKET_NAME, filename)
       const existingData = await streamToString(existingObject)
       
       if (existingData.trim()) {
@@ -85,7 +107,7 @@ export async function saveTop50CoinsToMinio(coinsData: CryptoData[]): Promise<bo
 
     // Save to MinIO
     const buffer = Buffer.from(finalCsvContent, 'utf8')
-    await minioClient.putObject(BUCKET_NAME, filename, buffer, buffer.length, {
+    await getMinioClient().putObject(BUCKET_NAME, filename, buffer, buffer.length, {
       'Content-Type': 'text/csv'
     })
 
@@ -131,7 +153,7 @@ export async function saveCoinDataToMinio(coinData: CryptoData): Promise<boolean
     // Try to read existing file and append
     let finalCsvContent: string
     try {
-      const existingObject = await minioClient.getObject(BUCKET_NAME, filename)
+      const existingObject = await getMinioClient().getObject(BUCKET_NAME, filename)
       const existingData = await streamToString(existingObject)
       
       if (existingData.trim()) {
@@ -151,7 +173,7 @@ export async function saveCoinDataToMinio(coinData: CryptoData): Promise<boolean
 
     // Save to MinIO
     const buffer = Buffer.from(finalCsvContent, 'utf8')
-    await minioClient.putObject(BUCKET_NAME, filename, buffer, buffer.length, {
+    await getMinioClient().putObject(BUCKET_NAME, filename, buffer, buffer.length, {
       'Content-Type': 'text/csv'
     })
 
@@ -184,7 +206,7 @@ export async function readCoinDataFromMinio(coinId: string): Promise<any[]> {
     const filename = `crypto_prices/top50_${dateStr}.csv`
 
     try {
-      const objectStream = await minioClient.getObject(BUCKET_NAME, filename)
+      const objectStream = await getMinioClient().getObject(BUCKET_NAME, filename)
       const csvContent = await streamToString(objectStream)
       
       if (!csvContent.trim()) {
@@ -234,7 +256,7 @@ export async function readCryptoDataFromMinio(): Promise<any[]> {
     const filename = `crypto_prices/top50_${dateStr}.csv`
 
     try {
-      const objectStream = await minioClient.getObject(BUCKET_NAME, filename)
+      const objectStream = await getMinioClient().getObject(BUCKET_NAME, filename)
       const csvContent = await streamToString(objectStream)
       
       if (!csvContent.trim()) {
@@ -300,7 +322,7 @@ export async function readForecastPricesFromMinio(coinId?: string): Promise<any[
     const filename = `crypto_prices/forecast_price_${dateStr}.csv`
 
     try {
-      const objectStream = await minioClient.getObject(BUCKET_NAME, filename)
+      const objectStream = await getMinioClient().getObject(BUCKET_NAME, filename)
       const csvContent = await streamToString(objectStream)
       
       if (!csvContent.trim()) {
@@ -345,7 +367,7 @@ export async function readForecastPricesFromMinio(coinId?: string): Promise<any[
       const yesterdayFilename = `crypto_prices/forecast_price_${yesterdayStr}.csv`
       
       try {
-        const objectStream = await minioClient.getObject(BUCKET_NAME, yesterdayFilename)
+        const objectStream = await getMinioClient().getObject(BUCKET_NAME, yesterdayFilename)
         const csvContent = await streamToString(objectStream)
         
         if (!csvContent.trim()) {
