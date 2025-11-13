@@ -1,10 +1,22 @@
 {
   "version": 2,
+  "buildCommand": "npm run build",
+  "framework": "nextjs",
   "env": {
     "MINIO_ENDPOINT": "play.min.io",
     "MINIO_ACCESS_KEY": "Q3AM3UQ867SPQQA43P2F",
     "MINIO_SECRET_KEY": "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG",
     "MINIO_USE_SSL": "true",
     "MINIO_BUCKET": "crypto-data"
+  },
+  "functions": {
+    "app/api/*/route.ts": {
+      "runtime": "nodejs20.x",
+      "maxDuration": 30
+    },
+    "pages/api/*.ts": {
+      "runtime": "nodejs20.x", 
+      "maxDuration": 30
+    }
   }
 }
