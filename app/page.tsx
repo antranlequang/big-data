@@ -43,39 +43,43 @@ export default function CryptoDashboard() {
     reasoning: string[]
   } | null>(null)
 
-  // Fetch available coins from CoinGecko API
+  // Fetch available coins from CoinGecko API - TEMPORARILY DISABLED FOR DEPLOYMENT
   const fetchAvailableCoins = async () => {
     setLoadingCoins(true)
     try {
-      const response = await fetch('/api/coins')
-      if (response.ok) {
-        const result = await response.json()
-        if (result.success && result.coins.length > 0) {
-          setAvailableCoins(result.coins)
-          // Set default coin if not already set
-          if (!selectedCoin && result.coins.length > 0) {
-            setSelectedCoin(result.coins[0].id)
-          }
-        }
+      // DISABLED: const response = await fetch('/api/coins')
+      // Use hardcoded top coins instead of fetching from API
+      const staticCoins = [
+        { id: 'bitcoin', name: 'Bitcoin', symbol: 'btc' },
+        { id: 'ethereum', name: 'Ethereum', symbol: 'eth' },
+        { id: 'tether', name: 'Tether', symbol: 'usdt' },
+        { id: 'bnb', name: 'BNB', symbol: 'bnb' },
+        { id: 'solana', name: 'Solana', symbol: 'sol' },
+        { id: 'usdc', name: 'USD Coin', symbol: 'usdc' },
+        { id: 'xrp', name: 'XRP', symbol: 'xrp' }
+      ]
+      
+      setAvailableCoins(staticCoins)
+      // Set default coin if not already set
+      if (!selectedCoin && staticCoins.length > 0) {
+        setSelectedCoin(staticCoins[0].id)
       }
     } catch (error) {
-      console.error('Error fetching available coins:', error)
+      console.error('Error setting available coins:', error)
     } finally {
       setLoadingCoins(false)
     }
   }
 
-  // Fetch current coin data from CoinGecko API
+  // Fetch current coin data from CoinGecko API - TEMPORARILY DISABLED FOR DEPLOYMENT
   const fetchCurrentCoinData = async () => {
     if (!selectedCoin) return
     
     setLoading(true)
     try {
-      const coinData = await fetchCoinData(selectedCoin)
-      if (coinData) {
-        setCryptoData(coinData)
-        setLastUpdate(new Date().toLocaleTimeString())
-      }
+      // DISABLED: const coinData = await fetchCoinData(selectedCoin)
+      console.log('CoinGecko API disabled for deployment - using MinIO data only')
+      setLastUpdate(new Date().toLocaleTimeString())
     } catch (error) {
       console.error('Error fetching coin data:', error)
     } finally {
@@ -110,14 +114,14 @@ export default function CryptoDashboard() {
           })
           setLastUpdate(new Date().toLocaleTimeString())
         } else {
-          // No MinIO data, fetch from API
-          await fetchCurrentCoinData()
+          // No MinIO data - API disabled for deployment
+          console.log('No MinIO data available, API calls disabled for deployment')
         }
       }
     } catch (error) {
       console.error('Error fetching MinIO data:', error)
-      // Fallback to API
-      await fetchCurrentCoinData()
+      // API fallback disabled for deployment
+      console.log('API fallback disabled for deployment')
     }
   }
 
@@ -251,7 +255,7 @@ export default function CryptoDashboard() {
     }
   }
 
-  // Fetch treemap data from MinIO
+  // Fetch treemap data from MinIO - KEPT ACTIVE (using MinIO only)
   const fetchTreemapData = async () => {
     try {
       const coinIds = [
@@ -287,7 +291,7 @@ export default function CryptoDashboard() {
           }
           return null
         } catch (error) {
-          console.warn(`Failed to fetch data for ${coinId}:`, error)
+          console.warn(`Failed to fetch MinIO data for ${coinId}:`, error)
           return null
         }
       })
@@ -298,10 +302,12 @@ export default function CryptoDashboard() {
       if (validCoins.length > 0) {
         const sortedCoins = validCoins.sort((a, b) => b.market_cap - a.market_cap).slice(0, 50)
         setTreemapData(sortedCoins)
-        console.log(`📊 Updated treemap data for ${sortedCoins.length} coins`)
+        console.log(`📊 Updated treemap data for ${sortedCoins.length} coins (MinIO only)`)
+      } else {
+        console.log('📊 No treemap data available from MinIO')
       }
     } catch (error) {
-      console.error('❌ Error fetching treemap data:', error)
+      console.error('❌ Error fetching treemap data from MinIO:', error)
     }
   }
 
@@ -551,26 +557,15 @@ export default function CryptoDashboard() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isDropdownOpen])
 
-  // Automatically start data collector on component mount
+  // Data collector - TEMPORARILY DISABLED FOR DEPLOYMENT
   useEffect(() => {
     const startDataCollector = async () => {
       try {
-        console.log('🚀 Auto-starting background data collector for top 50 coins...')
-        
-        const response = await fetch('/api/data-collector', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'start' })
-        })
-        
-        const result = await response.json()
-        if (result.success) {
-          console.log('✅ Background data collector started automatically')
-        } else {
-          console.error('❌ Failed to start data collector:', result.error)
-        }
+        console.log('📝 Data collector disabled for deployment - using existing MinIO data only')
+        // DISABLED: Auto-starting background data collector
+        // This prevents CoinGecko API calls during deployment
       } catch (error) {
-        console.error('❌ Error starting data collector:', error)
+        console.error('❌ Error in data collector setup:', error)
       }
     }
     
